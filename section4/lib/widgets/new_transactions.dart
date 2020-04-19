@@ -41,6 +41,7 @@ class _NewTransactionState extends State<NewTransaction> {
           children: <Widget>[
             TextField(
               decoration: InputDecoration(labelText: 'Title'),
+              textCapitalization: TextCapitalization.sentences,
               controller: titleController,
               onSubmitted: (_) => submitData(),
             ),
