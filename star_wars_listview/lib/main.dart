@@ -54,6 +54,8 @@ class _MyHomePageState extends State<MyHomePage> {
     ),
   ];
 
+  jsonFile = File 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
