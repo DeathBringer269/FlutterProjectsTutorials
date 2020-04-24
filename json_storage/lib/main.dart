@@ -1,13 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 //to convert from json to map and vice versa
 import 'dart:convert';
+
 //for file and directory
 import 'dart:io';
+
 //to get application directory
 import 'package:path_provider/path_provider.dart';
+import './secondPage.dart';
 
-void main() => runApp(MyApp());
+void main(){
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -15,17 +21,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "JsonStorage",
       theme: ThemeData.light(),
-      home: HomePage(),
+      home: FirstPage(),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
+class FirstPage extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _FirstPageState createState() => _FirstPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _FirstPageState extends State<FirstPage> {
   TextEditingController keyInputController = new TextEditingController();
   TextEditingController valueInputController = new TextEditingController();
 
@@ -37,15 +43,16 @@ class _HomePageState extends State<HomePage> {
 
   void initState() {
     super.initState();
+    ParseJson parse = new ParseJson();
+    parse.loadCrossword();
     //get the directory asynchronously
     getApplicationDocumentsDirectory().then((Directory directory) {
       //after that create a new file with the directory as prefix
       dir = directory;
       jsonFile = new File(dir.path + "/" + fileName);
       fileExists = jsonFile.existsSync();
-      if (fileExists)
-        this.setState(
-          //change the state to show the json file contents
+      if (fileExists) this.setState(
+            //change the state to show the json file contents
             () => fileContent = json.decode(jsonFile.readAsStringSync()));
     });
     print("This has been executed");
@@ -57,12 +64,13 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  void createFile(Map<String, dynamic> content, Directory dir, String fileName) {
+  void createFile(
+      Map<String, dynamic> content, Directory dir, String fileName) {
     print("Creating file");
     File file = new File(dir.path + "/" + fileName);
     file.createSync();
     fileExists = file.existsSync();
-    if(fileExists) {
+    if (fileExists) {
       file.writeAsStringSync(json.encode(content));
       //creating a map with the contents of the existing json file
 //      Map<String, String> jsonFileContent  = json.decode(jsonFile.readAsStringSync());
@@ -80,10 +88,11 @@ class _HomePageState extends State<HomePage> {
     print("Writing to file");
     //creating new map with the passed arguments
     Map<String, dynamic> content = {key: value};
-    if(fileExists) {
+    if (fileExists) {
       print("File exists");
       //creating a map with the contents of the existing json file
-      Map<String, dynamic> jsonFileContent  = json.decode(jsonFile.readAsStringSync());
+      Map<String, dynamic> jsonFileContent =
+          json.decode(jsonFile.readAsStringSync());
       //appending to the map with our content
       jsonFileContent.addAll(content);
       //the map needs to be encoded before writing to json file
@@ -119,7 +128,11 @@ class _HomePageState extends State<HomePage> {
             ),
             Text(
               "Add to json file",
-              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0,
+              ),
+              textAlign: TextAlign.start,
             ),
             TextField(
               decoration: InputDecoration(
@@ -144,7 +157,24 @@ class _HomePageState extends State<HomePage> {
             ),
             RaisedButton(
               child: Text("Add to json"),
-              onPressed: () => writeFile(keyInputController.text, valueInputController.text),
+              onPressed: () =>
+                  writeFile(keyInputController.text, valueInputController.text),
+            ),
+            RaisedButton(
+              color: Colors.blueAccent,
+              child: Text(
+                "Go to second page",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              onPressed: () {
+                setState(() {});
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SecondPage()),
+                );
+              },
             ),
           ],
         ),
