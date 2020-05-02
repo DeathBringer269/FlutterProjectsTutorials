@@ -8,6 +8,7 @@ import 'package:transparent_image/transparent_image.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/product.dart';
+import '../providers/cart.dart';
 
 class ProductItem extends StatelessWidget {
 //  final String id;
@@ -18,7 +19,8 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final product = Provider.of<Product>(context);
+    final product = Provider.of<Product>(context, listen: false);
+    final cart = Provider.of<Cart>(context, listen: false);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GestureDetector(
@@ -35,14 +37,16 @@ class ProductItem extends StatelessWidget {
             fit: BoxFit.cover,
           ),
           footer: GridTileBar(
-            leading: IconButton(
-              color: Theme.of(context).accentColor,
-              icon: Icon(
-                product.isFavorite ? Icons.favorite : Icons.favorite_border,
+            leading: Consumer<Product>(
+              builder: (ctx, product, _) => IconButton(
+                color: Theme.of(context).accentColor,
+                icon: Icon(
+                  product.isFavorite ? Icons.favorite : Icons.favorite_border,
+                ),
+                onPressed: () {
+                  product.toggleFavoriteStatus();
+                },
               ),
-              onPressed: () {
-                product.toggleFavoriteStatus();
-              },
             ),
             backgroundColor: Colors.black87,
             title: Text(
@@ -53,7 +57,9 @@ class ProductItem extends StatelessWidget {
             trailing: IconButton(
               color: Theme.of(context).accentColor,
               icon: Icon(Icons.shopping_cart),
-              onPressed: () {},
+              onPressed: () {
+                cart.addItem(product.id, product.price, product.title);
+              },
             ),
           ),
         ),
